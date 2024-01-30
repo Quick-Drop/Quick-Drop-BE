@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from database import Database
 from models import Test
+from models import User
 
 app = FastAPI()
 
@@ -16,54 +17,21 @@ async def root():
     session.close()
     return example
 
-@app.post("/create")
-async def create(name: str, number: int):
+@app.get("/user")
+def get_user():
     session = database.get_session()
-    test = Test(name=name, number=number)
-    session.add(test)
-    session.commit()
-    session.close()
-    return {"message": "created"}
-
-@app.delete("/delete/{id}")
-async def delete(id: int):
-    session = database.get_session()
-    session.query(Test).filter(Test.id == id).delete()
-    session.commit()
-    session.close()
-    return {"message": "deleted"}
-
-@app.put("/update/{id}")
-async def update(id: int, name: str, number: int):
-    session = database.get_session()
-    session.query(Test).filter(Test.id == id).update({"name": name, "number": number})
-    session.commit()
-    session.close()
-    return {"message": "updated"}
-
-@app.get("/get/{id}")
-async def get(id: int):
-    session = database.get_session()
-    example = session.query(Test).filter(Test.id == id).first()
-    if example == None:
-        return {"message": "no data"}
-    session.close()
-    return example
-
-@app.get("/get_by_name/{name}")
-async def get_by_name(name: str):
-    session = database.get_session()
-    example = session.query(Test).filter(Test.name == name).all()
+    example = session.query(User).all()
     if example == []:
         return {"message": "no data"}
+    print(example)
     session.close()
     return example
 
-@app.get("/get_by_number/{number}")
-async def get_by_number(number: int):
+@app.post("/user")
+def create_user(name: str, email: str, password: str, phonenumber: str):
     session = database.get_session()
-    example = session.query(Test).filter(Test.number == number).all()
-    if example == []:
-        return {"message": "no data"}
+    user = User(name=name, email=email, password=password, phonenumber=phonenumber)
+    session.add(user)
+    session.commit()
     session.close()
-    return example
+    return {"message": "success"}
