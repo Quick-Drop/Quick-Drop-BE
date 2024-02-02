@@ -6,6 +6,10 @@ app = FastAPI()
 
 database = Database()
 
+@app.get("/")
+def read_root():
+    return {"message": "Hello World"}
+
 @app.get("/user")
 def get_user():
     session = database.get_session()
