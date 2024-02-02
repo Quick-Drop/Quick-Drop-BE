@@ -35,3 +35,12 @@ def create_user(name: str, email: str, password: str, phonenumber: str):
     session.commit()
     session.close()
     return {"message": "success"}
+
+@app.delete("/user")
+def delete_user(id: int):
+    session = database.get_session()
+    user = session.query(User).filter(User.id == id).first()
+    session.delete(user)
+    session.commit()
+    session.close()
+    return {"message": "success"}
