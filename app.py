@@ -49,29 +49,20 @@ def get_product():
     session.close()
     return example
 
-class ProductCreate(BaseModel):
-    user_id: int
-    Product_Title: str
-    Product_description: str
-    brandName: str
-    dateOfManufacture: str
-    color: str
-    category: str
-
 @app.post("/donation/upload")
-def create_product(product_request: ProductCreate):
+def create_product(product: Product):
     session = database.get_session()
-    user = session.query(User).filter(User.id == product_request.user_id).first()
+    user = session.query(User).filter(User.id == product.user_id).first()
     if user == None:
         return {"message": "user not found"}
     
     product = Product(
-        title=product_request.Product_Title, 
-        description=product_request.Product_description, 
-        brand_name=product_request.brandName, 
-        date_of_manufacture=product_request.dateOfManufacture, 
-        color=product_request.color, 
-        category=product_request.category
+        title=product.Product_Title, 
+        description=product.Product_description, 
+        brand_name=product.brandName, 
+        date_of_manufacture=product.dateOfManufacture, 
+        color=product.color, 
+        category=product.category
     )
     
     session.add(product)
