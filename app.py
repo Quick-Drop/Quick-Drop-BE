@@ -181,9 +181,16 @@ def extract_class(content):
             return c
     return None
 
+@app.get("/desk")
+def get_desk():
+    with open("desk.png", "rb") as image_file:
+        image_data = base64.b64encode(image_file.read()).decode('utf-8')
+        result_class = classify_image(image_data)
+        return JSONResponse(content={"result": result_class})
 
 @app.post("/classify")
-async def classify(file: UploadFile = UploadFile(...)):
+# use desk.png as image_data
+async def classify(file: UploadFile = File(...) ):
     try:
         image_data = await file.read()
         image_data_base64 = base64.b64encode(image_data).decode('utf-8')
