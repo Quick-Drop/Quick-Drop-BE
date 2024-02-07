@@ -9,9 +9,6 @@ import io
 import openai
 import env
 
-import os
-from dotenv import load_dotenv
-
 openai.api_key = env.OPENAI_API_KEY
 
 app = FastAPI()
