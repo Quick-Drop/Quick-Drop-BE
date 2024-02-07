@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from database import Database
 from models import Product, User
-from pydantic import BaseModel
 
 app = FastAPI()
 
