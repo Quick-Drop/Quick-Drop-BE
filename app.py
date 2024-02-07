@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from database import Database
-from models import User
+from models import Product, User
 
 app = FastAPI()
 
@@ -37,3 +37,16 @@ def delete_user(id: int):
     session.commit()
     session.close()
     return {"message": "success"}
+
+@app.post("/donation/upload")
+def upload_donation(user_id: int, Product_Title: str, Prodcut_description: str, brandName: str, dateOfManufacture: str, color: str, category: str):
+    session = database.get_session()
+    user = session.query(User).filter(User.id == user_id).first()
+    if user == None:
+        return {"status": "user not found"}
+    else:
+        product = Product(title=Product_Title, description=Prodcut_description, brand_name=brandName, date_of_manufacture=dateOfManufacture, color=color, category=category)
+        session.add(product)
+        session.commit()
+        session.close()
+        return {"status": "success"}

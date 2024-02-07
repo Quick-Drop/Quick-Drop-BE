@@ -17,8 +17,9 @@ class Product(Base):
     __tablename__ = 'product'
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    name = Column(TEXT, nullable=False)
-    brandName = Column(TEXT, nullable=False)
-    dateOfManufacture = Column(TEXT, nullable=False)
+    title = Column(TEXT, nullable=False)
+    description = Column(TEXT, nullable=False)
+    brand_name = Column(TEXT, nullable=False)
+    date_of_manufacture = Column(TEXT, nullable=False)
     color = Column(TEXT, nullable=False)
     category = Column(TEXT, nullable=False)
