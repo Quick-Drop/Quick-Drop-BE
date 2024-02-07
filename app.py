@@ -37,13 +37,18 @@ def get_user():
     return example
 
 @app.post("/user")
-def create_user(name: str, email: str, password: str, phonenumber: str):
+def create_user(user_request: UserRequest):
     session = database.get_session()
-    user = User(name=name, email=email, password=password, phonenumber=phonenumber)
+    user = User(
+        name=user_request.name,
+        email=user_request.email,
+        password=user_request.password,
+        phonenumber=user_request.phonenumber
+    )
     session.add(user)
     session.commit()
     session.close()
-    return {"message": "success"}
+    return {"status": "success"}
 
 @app.delete("/user")
 def delete_user(id: int):
@@ -66,23 +71,23 @@ def get_product():
 
 
 @app.post("/donation/upload")
-def create_product(product: ProductRequest):
+def create_product(product_request: ProductRequest):
     session = database.get_session()
-    user = session.query(User).filter(User.id == product.user_id).first()
+    user = session.query(User).filter(User.id == product_request.user_id).first()
     if user == None:
         return {"message": "user not found"}
     
-    product = Product(
-        user_id=product.user_id,
-        title=product.Product_Title, 
-        description=product.Product_description, 
-        brand_name=product.brandName, 
-        date_of_manufacture=product.dateOfManufacture, 
-        color=product.color, 
-        category=product.category
+    product_request = Product(
+        user_id=product_request.user_id,
+        title=product_request.Product_Title, 
+        description=product_request.Product_description, 
+        brand_name=product_request.brandName, 
+        date_of_manufacture=product_request.dateOfManufacture, 
+        color=product_request.color, 
+        category=product_request.category
     )
     
-    session.add(product)
+    session.add(product_request)
     session.commit()
     session.close()
     return {"status": "success"}
