@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from database import Database
 from models import Product, User
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -48,15 +49,31 @@ def get_product():
     session.close()
     return example
 
+class ProductCreate(BaseModel):
+    user_id: int
+    Product_Title: str
+    Product_description: str
+    brandName: str
+    dateOfManufacture: str
+    color: str
+    category: str
+
 @app.post("/donation/upload")
-def create_product(user_id: int, Product_Title: str, Product_description: str, brandName: str, dateOfManufacture: str, color: str, category: str):
-    # print request body
-    print(user_id, Product_Title, Product_description, brandName, dateOfManufacture, color, category)
+def create_product(product_request: ProductCreate):
     session = database.get_session()
-    user = session.query(User).filter(User.id == user_id).first()
+    user = session.query(User).filter(User.id == product_request.user_id).first()
     if user == None:
         return {"message": "user not found"}
-    product = Product(title=Product_Title, description=Product_description, brand_name=brandName, date_of_manufacture=dateOfManufacture, color=color, category=category)
+    
+    product = Product(
+        title=product_request.Product_Title, 
+        description=product_request.Product_description, 
+        brand_name=product_request.brandName, 
+        date_of_manufacture=product_request.dateOfManufacture, 
+        color=product_request.color, 
+        category=product_request.category
+    )
+    
     session.add(product)
     session.commit()
     session.close()
