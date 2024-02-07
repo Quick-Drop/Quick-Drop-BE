@@ -40,12 +40,11 @@ def read_root():
 @app.get("/user")
 def get_user():
     session = database.get_session()
-    example = session.query(User).all()
-    if example == []:
+    users = session.query(User).all()
+    if users == []:
         return {"message": "no data"}
-    print(example)
     session.close()
-    return example
+    return users
 
 @app.post("/signup")
 def create_user(user_request: UserRequest):
@@ -101,6 +100,15 @@ def get_product():
     session.close()
     return example
 
+@app.get("/user/{user_id}/donations")
+def get_user_donations(user_id: int):
+    session = database.get_session()
+    user = session.query(User).filter(User.id == user_id).first()
+    if user == None:
+        return {"message": "user not found"}
+    donations = user.product
+    session.close()
+    return donations
 
 @app.post("/donation/upload")
 def create_product(product_request: ProductRequest):
