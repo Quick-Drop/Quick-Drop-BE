@@ -55,7 +55,6 @@ def create_user(user_request: UserRequest):
         name=user_request.name,
         email=user_request.email,
         password=user_request.password,
-        phonenumber=user_request.phonenumber
     )
     session.add(user)
     session.commit()
@@ -83,6 +82,15 @@ def login_user(login_request: LoginRequest):
         return {"message": "password incorrect"}
     session.close()
     return {"status": "success"}
+
+@app.get("/user/profile/{id}")
+def get_user_profile(id: int):
+    session = database.get_session()
+    user = session.query(User).filter(User.id == id).first()
+    if user == None:
+        return {"message": "user not found"}
+    session.close()
+    return user
 
 @app.get("/product")
 def get_product():
