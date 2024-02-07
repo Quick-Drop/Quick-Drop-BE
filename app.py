@@ -67,6 +67,7 @@ def create_product(product: ProductRequest):
         return {"message": "user not found"}
     
     product = Product(
+        user_id=product.user_id,
         title=product.Product_Title, 
         description=product.Product_description, 
         brand_name=product.brandName, 
