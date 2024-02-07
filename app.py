@@ -63,7 +63,7 @@ def create_user(user_request: UserRequest):
     return {"status": "success"}
 
 @app.delete("/user/{id}")
-def delete_user():
+def delete_user(id: int):
     session = database.get_session()
     user = session.query(User).filter(User.id == id).first()
     if user == None:
