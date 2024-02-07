@@ -19,7 +19,6 @@ class UserRequest(BaseModel):
     name: str
     email: str
     password: str
-    phonenumber: str
 
 class LoginRequest(BaseModel):
     email: str
