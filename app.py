@@ -49,14 +49,13 @@ def get_product():
     return example
 
 @app.post("/donation/upload")
-def upload_donation(user_id: int, Product_Title: str, Product_description: str, brandName: str, dateOfManufacture: str, color: str, category: str):
+def create_product(user_id: int, Product_Title: str, Product_description: str, brandName: str, dateOfManufacture: str, color: str, category: str):
     session = database.get_session()
     user = session.query(User).filter(User.id == user_id).first()
     if user == None:
-        return {"status": "user not found"}
-    else:
-        product = Product(title=Product_Title, description=Product_description, brand_name=brandName, date_of_manufacture=dateOfManufacture, color=color, category=category)
-        session.add(product)
-        session.commit()
-        session.close()
-        return {"status": "success"}
+        return {"message": "user not found"}
+    product = Product(title=Product_Title, description=Product_description, brand_name=brandName, date_of_manufacture=dateOfManufacture, color=color, category=category)
+    session.add(product)
+    session.commit()
+    session.close()
+    return {"status": "success"}
