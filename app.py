@@ -38,6 +38,16 @@ def delete_user(id: int):
     session.close()
     return {"message": "success"}
 
+@app.get("/product")
+def get_product():
+    session = database.get_session()
+    example = session.query(Product).all()
+    if example == []:
+        return {"message": "no data"}
+    print(example)
+    session.close()
+    return example
+
 @app.post("/donation/upload")
 def upload_donation(user_id: int, Product_Title: str, Prodcut_description: str, brandName: str, dateOfManufacture: str, color: str, category: str):
     session = database.get_session()
