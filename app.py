@@ -107,6 +107,8 @@ def get_user_donations(user_id: int):
     if user == None:
         return {"message": "user not found"}
     donations = user.product
+    if donations == []:
+        return {"message": "no products"}
     session.close()
     return donations
 
