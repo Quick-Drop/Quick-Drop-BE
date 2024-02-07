@@ -9,10 +9,10 @@ database = Database()
 
 class ProductRequest(BaseModel):
     user_id: int
-    title: str
-    description: str
-    brand_name: str
-    date_of_manufacture: str
+    Product_Title: str
+    Product_description: str
+    brandName: str
+    dateOfManufacture: str
     color: str
     category: str
 
@@ -57,6 +57,7 @@ def get_product():
     print(example)
     session.close()
     return example
+
 
 @app.post("/donation/upload")
 def create_product(product: ProductRequest):
