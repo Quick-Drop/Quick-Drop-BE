@@ -13,7 +13,7 @@ class User(Base):
     password = Column(TEXT, nullable=False)
     phonenumber = Column(TEXT, nullable=False)
     # User 모델에서 Product 모델로의 관계를 추가
-    products = relationship("Product", back_populates="user")
+    product = relationship("Product", back_populates="user")
 
 
 class Product(Base):

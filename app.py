@@ -1,10 +1,20 @@
 from fastapi import FastAPI
 from database import Database
 from models import Product, User
+from pydantic import BaseModel
 
 app = FastAPI()
 
 database = Database()
+
+class ProductRequest(BaseModel):
+    user_id: int
+    title: str
+    description: str
+    brand_name: str
+    date_of_manufacture: str
+    color: str
+    category: str
 
 @app.get("/")
 def read_root():
@@ -49,7 +59,7 @@ def get_product():
     return example
 
 @app.post("/donation/upload")
-def create_product(product: Product):
+def create_product(product: ProductRequest):
     session = database.get_session()
     user = session.query(User).filter(User.id == product.user_id).first()
     if user == None:
