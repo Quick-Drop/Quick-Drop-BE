@@ -50,6 +50,8 @@ def get_product():
 
 @app.post("/donation/upload")
 def create_product(user_id: int, Product_Title: str, Product_description: str, brandName: str, dateOfManufacture: str, color: str, category: str):
+    # print request body
+    print(user_id, Product_Title, Product_description, brandName, dateOfManufacture, color, category)
     session = database.get_session()
     user = session.query(User).filter(User.id == user_id).first()
     if user == None:
