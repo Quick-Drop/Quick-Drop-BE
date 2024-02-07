@@ -7,6 +7,12 @@ app = FastAPI()
 
 database = Database()
 
+class UserRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    phonenumber: str
+
 class ProductRequest(BaseModel):
     user_id: int
     Product_Title: str
