@@ -70,7 +70,16 @@ def delete_user(id: int):
     session.close()
     return {"status": "success"}
 
-@app.post("login")
+@app.get("/user/profile/{user_id}")
+def get_user_profile(user_id: int):
+    session = database.get_session()
+    user = session.query(User).filter(User.id == user_id).first()
+    if user == None:
+        return {"message": "user not found"}
+    session.close()
+    return user
+
+@app.post("/login")
 def login_user(login_request: LoginRequest):
     session = database.get_session()
     user = session.query(User).filter(User.email == login_request.email).first()
@@ -79,6 +88,10 @@ def login_user(login_request: LoginRequest):
     if user.password != login_request.password:
         return {"message": "password incorrect"}
     session.close()
+    return {"status": "success"}
+
+@app.post("/logout")
+def logout_user():
     return {"status": "success"}
 
 @app.get("/user/profile/{id}")
