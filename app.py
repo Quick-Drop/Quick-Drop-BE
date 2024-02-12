@@ -77,6 +77,10 @@ def get_user():
 def create_user(user_request: UserRequest):
     try:
         session = database.get_session()
+        # 해당 이메일을 가진 사용자가 이미 존재하는지 확인
+        user = session.query(User).filter(User.email == user_request.email).first()
+        if user != None:
+            return {"status": "fail", "message": "user already exists"}
         user = User(
             name=user_request.name,
             email=user_request.email,
@@ -88,7 +92,6 @@ def create_user(user_request: UserRequest):
         return {"status": "success"}
     except Exception as e:
         return {"status": "fail", "message": str(e)}
-
 
 @app.post("/signin")
 def login_user(login_request: LoginRequest):
