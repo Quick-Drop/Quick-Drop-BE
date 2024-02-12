@@ -11,7 +11,9 @@ class User(Base):
     name = Column(TEXT, nullable=False)
     email = Column(TEXT, nullable=False)
     password = Column(TEXT, nullable=False)
-    phonenumber = Column(TEXT, nullable=True)
+    phone_number = Column(TEXT, nullable=True)
+    profile_image_url = Column(TEXT, nullable=True)
+    address = Column(TEXT, nullable=True)
     # User 모델에서 Product 모델로의 관계를 추가
     product = relationship("Product", back_populates="user")
 

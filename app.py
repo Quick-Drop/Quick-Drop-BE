@@ -20,6 +20,16 @@ class UserRequest(BaseModel):
     email: str
     password: str
 
+class UserProfile(BaseModel):
+    name: str
+    email: str
+    password: str
+    phone_number: str
+    profile_image_url: str
+
+class UserLocation(BaseModel):
+    location: str
+
 class LoginRequest(BaseModel):
     email: str
     password: str
@@ -40,6 +50,8 @@ class ProductImage(BaseModel):
 async def upload(item: ProductImage):
     try:
         decoded_data = base64.b64decode(item.data)
+        with open("test.png", "wb") as f:
+            f.write(decoded_data)
         return {
             "message": "Data received successfully",
             "decoded_data": decoded_data
@@ -51,6 +63,7 @@ async def upload(item: ProductImage):
 def read_root():
     return {"message": "Hello World"}
 
+######################################## User API ########################################
 @app.get("/user")
 def get_user():
     session = database.get_session()
@@ -62,91 +75,156 @@ def get_user():
 
 @app.post("/signup")
 def create_user(user_request: UserRequest):
-    session = database.get_session()
-    user = User(
-        name=user_request.name,
-        email=user_request.email,
-        password=user_request.password,
-    )
-    session.add(user)
-    session.commit()
-    session.close()
-    return {"status": "success"}
+    try:
+        session = database.get_session()
+        user = User(
+            name=user_request.name,
+            email=user_request.email,
+            password=user_request.password,
+        )
+        session.add(user)
+        session.commit()
+        session.close()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
+
 
 @app.post("/signin")
 def login_user(login_request: LoginRequest):
-    session = database.get_session()
-    user = session.query(User).filter(User.email == login_request.email).first()
-    if user == None:
-        return {"message": "user not found"}
-    if user.password != login_request.password:
-        return {"message": "password incorrect"}
-    session.close()
-    return {"status": "success"}
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.email == login_request.email).first()
+        if user == None or user.password != login_request.password:
+            return {"status": "fail"}
+        session.close()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
 
 @app.delete("/user/{user_id}")
 def delete_user(user_id: int):
-    session = database.get_session()
-    user = session.query(User).filter(User.id == user_id).first()
-    if user == None:
-        return {"message": "user not found"}
-    session.delete(user)
-    session.commit()
-    session.close()
-    return {"status": "success"}
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        session.delete(user)
+        session.commit()
+        session.close()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
 
 @app.get("/user/{user_id}/profile")
 def get_user_profile(user_id: int):
-    session = database.get_session()
-    user = session.query(User).filter(User.id == user_id).first()
-    if user == None:
-        return {"message": "user not found"}
-    session.close()
-    return user
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        session.close()
+        return user
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
 
+@app.put("/user/{user_id}/profile")
+def update_user_profile(user_id: int, user_profile: UserProfile):
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        user.name = user_profile.name
+        user.email = user_profile.email
+        user.password = user_profile.password
+        user.phone_number = user_profile.phone_number
+        user.profile_image_url = user_profile.profile_image_url
+        session.commit()
+        session.close()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
+
+
+######################################## Product API ########################################
 @app.get("/product")
 def get_product():
-    session = database.get_session()
-    example = session.query(Product).all()
-    if example == []:
-        return {"message": "no data"}
-    print(example)
-    session.close()
-    return example
+    try:
+        session = database.get_session()
+        example = session.query(Product).all()
+        if example == []:
+            return {"message": "no data"}
+        session.close()
+        return example
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
 
 @app.get("/user/{user_id}/donations")
 def get_user_donations(user_id: int):
-    session = database.get_session()
-    user = session.query(User).filter(User.id == user_id).first()
-    if user == None:
-        return {"message": "user not found"}
-    donations = user.product
-    if donations == []:
-        return {"message": "no products"}
-    session.close()
-    return donations
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        donations = user.product
+        if donations == []:
+            return {"message": "no products"}
+        session.close()
+        return donations
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
 
 @app.post("/donation/upload")
 def create_product(product_request: ProductRequest):
-    session = database.get_session()
-    user = session.query(User).filter(User.id == product_request.user_id).first()
-    if user == None:
-        return {"message": "user not found"}
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == product_request.user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        product = Product(
+            user_id=product_request.user_id,
+            title=product_request.Product_Title, 
+            description=product_request.Product_description, 
+            brand_name=product_request.brandName, 
+            date_of_manufacture=product_request.dateOfManufacture, 
+            color=product_request.color, 
+            category=product_request.category
+        )
+        session.add(product)
+        session.commit()
+        session.close()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
+
+@app.get("/user/{user_id}/location")
+def get_user_location(user_id: int):
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        session.close()
+        return {"location": user.address}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
     
-    product_request = Product(
-        user_id=product_request.user_id,
-        title=product_request.Product_Title, 
-        description=product_request.Product_description, 
-        brand_name=product_request.brandName, 
-        date_of_manufacture=product_request.dateOfManufacture, 
-        color=product_request.color, 
-        category=product_request.category
-    )
-    
-    session.add(product_request)
-    session.commit()
-    session.close()
-    return {"status": "success"}
+@app.put("/user/{user_id}/location")
+def update_user_location(user_id: int, user_location: UserLocation):
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        user.address = user_location.location
+        session.commit()
+        session.close()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
+
+######################################## Image Classification API ########################################
 
 classes = ['Utensils', 'Furniture', 'Interior', 'Electronics',
            'Clothes', 'Cosmetics', 'Book', 'Groceries', 'Etc']
@@ -214,10 +292,13 @@ def extract_class(content):
 
 @app.get("/desk")
 def get_desk():
-    with open("desk.png", "rb") as image_file:
-        image_data = base64.b64encode(image_file.read()).decode('utf-8')
-        result_class = classify_image(image_data)
-        return JSONResponse(content={"result": result_class})
+    try:
+        with open("desk.png", "rb") as image_file:
+            image_data = base64.b64encode(image_file.read()).decode('utf-8')
+            result_class = classify_image(image_data)
+            return JSONResponse(content={"result": result_class})
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
 
 @app.post("/classify")
 # use desk.png as image_data
