@@ -33,6 +33,20 @@ class ProductRequest(BaseModel):
     color: str
     category: str
 
+class ProductImage(BaseModel):
+    data: str
+
+@app.post("/image/test")
+async def upload(item: Item):
+    try:
+        decoded_data = base64.b64decode(item.data)
+        return {
+            "message": "Data received successfully",
+            "decoded_data": decoded_data
+        }
+    except Exception as e:
+        return {"message": str(e)}
+
 @app.get("/")
 def read_root():
     return {"message": "Hello World"}
@@ -59,27 +73,7 @@ def create_user(user_request: UserRequest):
     session.close()
     return {"status": "success"}
 
-@app.delete("/user/{id}")
-def delete_user(id: int):
-    session = database.get_session()
-    user = session.query(User).filter(User.id == id).first()
-    if user == None:
-        return {"message": "user not found"}
-    session.delete(user)
-    session.commit()
-    session.close()
-    return {"status": "success"}
-
-@app.get("/user/profile/{user_id}")
-def get_user_profile(user_id: int):
-    session = database.get_session()
-    user = session.query(User).filter(User.id == user_id).first()
-    if user == None:
-        return {"message": "user not found"}
-    session.close()
-    return user
-
-@app.post("/login")
+@app.post("/signin")
 def login_user(login_request: LoginRequest):
     session = database.get_session()
     user = session.query(User).filter(User.email == login_request.email).first()
@@ -90,14 +84,21 @@ def login_user(login_request: LoginRequest):
     session.close()
     return {"status": "success"}
 
-@app.post("/logout")
-def logout_user():
+@app.delete("/user/{user_id}")
+def delete_user(user_id: int):
+    session = database.get_session()
+    user = session.query(User).filter(User.id == user_id).first()
+    if user == None:
+        return {"message": "user not found"}
+    session.delete(user)
+    session.commit()
+    session.close()
     return {"status": "success"}
 
-@app.get("/user/profile/{id}")
-def get_user_profile(id: int):
+@app.get("/user/{user_id}/profile")
+def get_user_profile(user_id: int):
     session = database.get_session()
-    user = session.query(User).filter(User.id == id).first()
+    user = session.query(User).filter(User.id == user_id).first()
     if user == None:
         return {"message": "user not found"}
     session.close()
