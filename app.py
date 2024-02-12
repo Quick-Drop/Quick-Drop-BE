@@ -37,7 +37,7 @@ class ProductImage(BaseModel):
     data: str
 
 @app.post("/image/test")
-async def upload(item: Item):
+async def upload(item: ProductImage):
     try:
         decoded_data = base64.b64decode(item.data)
         return {
