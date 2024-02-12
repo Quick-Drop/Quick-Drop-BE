@@ -293,15 +293,15 @@ def extract_class(content):
             return c
     return None
 
-@app.get("/desk")
-def get_desk():
-    try:
-        with open("desk.png", "rb") as image_file:
-            image_data = base64.b64encode(image_file.read()).decode('utf-8')
-            result_class = classify_image(image_data)
-            return JSONResponse(content={"result": result_class})
-    except Exception as e:
-        return {"status": "fail", "message": str(e)}
+# @app.get("/desk")
+# def get_desk():
+#     try:
+#         with open("desk.png", "rb") as image_file:
+#             image_data = base64.b64encode(image_file.read()).decode('utf-8')
+#             result_class = classify_image(image_data)
+#             return JSONResponse(content={"result": result_class})
+#     except Exception as e:
+#         return {"status": "fail", "message": str(e)}
 
 @app.post("/classify")
 # use desk.png as image_data
