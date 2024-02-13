@@ -103,7 +103,7 @@ def create_user(user_request: UserRequest):
         session.add(user)
         session.commit()
         session.close()
-        return {"status": "success", "user_id": user.id}
+        return {"status": "success"}
     except Exception as e:
         return {"status": "fail", "message": str(e)}
 
@@ -115,7 +115,7 @@ def login_user(login_request: LoginRequest):
         if user == None or user.password != login_request.password:
             return {"status": "fail"}
         session.close()
-        return {"status": "success"}
+        return {"status": "success", "user_id": user.id}
     except Exception as e:
         return {"status": "fail", "message": str(e)}
 
