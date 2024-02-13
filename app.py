@@ -58,21 +58,20 @@ class ProductRequest(BaseModel):
     color: str
     category: str
 
-class ProductImage(BaseModel):
+class ImageData(BaseModel):
     data: str
 
 @app.post("/image/test")
-async def upload(item: ProductImage):
+async def upload_image(image_data: ImageData):
     try:
-        decoded_data = base64.b64decode(item.data)
-        with open("test.png", "wb") as f:
-            f.write(decoded_data)
-        return {
-            "message": "Data received successfully",
-            "decoded_data": decoded_data
-        }
+        # base64 문자열을 바이너리 데이터로 디코딩
+        image_bytes = base64.b64decode(image_data.data)
+        # 파일로 저장
+        with open("test.png", "wb") as image_file:
+            image_file.write(image_bytes)
+        return {"message": "Image uploaded successfully."}
     except Exception as e:
-        return {"message": str(e)}
+        raise HTTPException(status_code=500, detail=f"Error saving image: {e}")
 
 @app.get("/")
 def read_root():
