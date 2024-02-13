@@ -43,7 +43,7 @@ class UserProfile(BaseModel):
     # profile_image_url: str
 
 class UserLocation(BaseModel):
-    location: str
+    address: str
 
 class LoginRequest(BaseModel):
     email: str
@@ -174,7 +174,7 @@ def get_user_location(user_id: int):
         if user == None:
             return {"message": "user not found"}
         session.close()
-        return {"location": user.address}
+        return {"address": user.address}
     except Exception as e:
         return {"status": "fail", "message": str(e)}
     
@@ -185,7 +185,7 @@ def update_user_location(user_id: int, user_location: UserLocation):
         user = session.query(User).filter(User.id == user_id).first()
         if user == None:
             return {"message": "user not found"}
-        user.address = user_location.location
+        user.address = user_location.address
         session.commit()
         session.close()
         return {"status": "success"}
