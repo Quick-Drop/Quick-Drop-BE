@@ -61,17 +61,17 @@ class ProductRequest(BaseModel):
 class ImageData(BaseModel):
     data: str
 
-@app.post("/image/test")
-async def upload_image(image_data: ImageData):
-    try:
-        # base64 문자열을 바이너리 데이터로 디코딩
-        image_bytes = base64.b64decode(image_data.data)
-        # 파일로 저장
-        with open("test.png", "wb") as image_file:
-            image_file.write(image_bytes)
-        return {"message": "Image uploaded successfully."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error saving image: {e}")
+# @app.post("/image/test")
+# async def upload_image(image_data: ImageData):
+#     try:
+#         # base64 문자열을 바이너리 데이터로 디코딩
+#         image_bytes = base64.b64decode(image_data.data)
+#         # 파일로 저장
+#         with open("test.png", "wb") as image_file:
+#             image_file.write(image_bytes)
+#         return {"message": "Image uploaded successfully."}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Error saving image: {e}")
 
 @app.get("/")
 def read_root():
@@ -310,27 +310,32 @@ def extract_class(content):
             return c
     return None
 
-# @app.get("/desk")
-# def get_desk():
-#     try:
-#         with open("desk.png", "rb") as image_file:
-#             image_data = base64.b64encode(image_file.read()).decode('utf-8')
-#             result_class = classify_image(image_data)
-#             return JSONResponse(content={"result": result_class})
-#     except Exception as e:
-#         return {"status": "fail", "message": str(e)}
 
 @app.post("/classify")
-# use desk.png as image_data
-async def classify(file: UploadFile = File(...) ):
+async def classify(image_data: ImageData):
     try:
-        image_data = await file.read()
-        image_data_base64 = base64.b64encode(image_data).decode('utf-8')
-        result_class = classify_image(image_data_base64)
+        # Base64 문자열을 바이너리 데이터로 디코딩
+        image_bytes = base64.b64decode(image_data.data)
+        
+        # 이미지 분류 로직 (여기서는 예시로 OpenAI API를 호출한다고 가정)
+        result_class = classify_image(image_data.data)  # Base64 인코딩된 데이터를 그대로 넘김
+        
+        # 분류 결과 반환
         return JSONResponse(content={"result": result_class})
     except Exception as e:
         print(f"Error during classification: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-    # finally:
-    #     cursor.close()
-    #     mysql_connection.close()
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
+    
+# 이전 코드
+# @app.post("/classify")
+# # use desk.png as image_data
+# async def classify(file: UploadFile = File(...) ):
+#     try:
+#         image_data = await file.read()
+#         image_data_base64 = base64.b64encode(image_data).decode('utf-8')
+#         result_class = classify_image(image_data_base64)
+#         return JSONResponse(content={"result": result_class})
+#     except Exception as e:
+#         print(f"Error during classification: {e}")
+#         raise HTTPException(status_code=500, detail="Internal Server Error")
+
