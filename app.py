@@ -40,7 +40,7 @@ class UserProfile(BaseModel):
     email: str
     password: str
     phone_number: str
-    profile_image_url: str
+    # profile_image_url: str
 
 class UserLocation(BaseModel):
     location: str
@@ -159,7 +159,7 @@ def update_user_profile(user_id: int, user_profile: UserProfile):
         user.email = user_profile.email
         user.password = user_profile.password
         user.phone_number = user_profile.phone_number
-        user.profile_image_url = user_profile.profile_image_url
+        # user.profile_image_url = user_profile.profile_image_url
         session.commit()
         session.close()
         return {"status": "success"}
