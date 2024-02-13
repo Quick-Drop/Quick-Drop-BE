@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, HTTPException, File
+from fastapi.middleware.cors import CORSMiddleware
 from database import Database
 from models import Product, User
 from pydantic import BaseModel
@@ -9,9 +10,23 @@ import io
 import openai
 import env
 
+app = FastAPI()
+
 openai.api_key = env.OPENAI_API_KEY
 
-app = FastAPI()
+origins = [
+    "http://localhost:58604",
+    "http://localhost:3000",  # 필요한 다른 도메인 추가
+]
+
+# 애플리케이션 인스턴스에 CORSMiddleware 추가
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # origins 리스트에 나열된 도메인으로부터의 요청을 허용
+    allow_credentials=True,
+    allow_methods=["*"],  # 모든 메소드 허용
+    allow_headers=["*"],  # 모든 헤더 허용
+)
 
 database = Database()
 
