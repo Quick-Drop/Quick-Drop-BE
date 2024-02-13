@@ -99,6 +99,9 @@ def create_user(user_request: UserRequest):
             name=user_request.name,
             email=user_request.email,
             password=user_request.password,
+            phone_number="",
+            address="",
+            profile_image_url=""
         )
         session.add(user)
         session.commit()
