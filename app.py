@@ -103,7 +103,7 @@ def create_user(user_request: UserRequest):
         session.add(user)
         session.commit()
         session.close()
-        return {"status": "success"}
+        return {"status": "success", "user_id": user.id}
     except Exception as e:
         return {"status": "fail", "message": str(e)}
 
