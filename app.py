@@ -166,58 +166,6 @@ def update_user_profile(user_id: int, user_profile: UserProfile):
     except Exception as e:
         return {"status": "fail", "message": str(e)}
 
-
-######################################## Product API ########################################
-@app.get("/product")
-def get_product():
-    try:
-        session = database.get_session()
-        example = session.query(Product).all()
-        if example == []:
-            return {"message": "no data"}
-        session.close()
-        return example
-    except Exception as e:
-        return {"status": "fail", "message": str(e)}
-
-@app.get("/user/{user_id}/donations")
-def get_user_donations(user_id: int):
-    try:
-        session = database.get_session()
-        user = session.query(User).filter(User.id == user_id).first()
-        if user == None:
-            return {"message": "user not found"}
-        donations = user.product
-        if donations == []:
-            return {"message": "no products"}
-        session.close()
-        return donations
-    except Exception as e:
-        return {"status": "fail", "message": str(e)}
-
-@app.post("/donation/upload")
-def create_product(product_request: ProductRequest):
-    try:
-        session = database.get_session()
-        user = session.query(User).filter(User.id == product_request.user_id).first()
-        if user == None:
-            return {"message": "user not found"}
-        product = Product(
-            user_id=product_request.user_id,
-            title=product_request.Product_Title, 
-            description=product_request.Product_description, 
-            brand_name=product_request.brandName, 
-            date_of_manufacture=product_request.dateOfManufacture, 
-            color=product_request.color, 
-            category=product_request.category
-        )
-        session.add(product)
-        session.commit()
-        session.close()
-        return {"status": "success"}
-    except Exception as e:
-        return {"status": "fail", "message": str(e)}
-
 @app.get("/user/{user_id}/location")
 def get_user_location(user_id: int):
     try:
@@ -238,6 +186,57 @@ def update_user_location(user_id: int, user_location: UserLocation):
         if user == None:
             return {"message": "user not found"}
         user.address = user_location.location
+        session.commit()
+        session.close()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
+
+@app.get("/user/{user_id}/donations")
+def get_user_donations(user_id: int):
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        donations = user.product
+        if donations == []:
+            return {"message": "no products"}
+        session.close()
+        return donations
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
+
+######################################## Product API ########################################
+@app.get("/product")
+def get_product():
+    try:
+        session = database.get_session()
+        example = session.query(Product).all()
+        if example == []:
+            return {"message": "no data"}
+        session.close()
+        return example
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
+
+@app.post("/donation/upload")
+def create_product(product_request: ProductRequest):
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == product_request.user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        product = Product(
+            user_id=product_request.user_id,
+            title=product_request.Product_Title, 
+            description=product_request.Product_description, 
+            brand_name=product_request.brandName, 
+            date_of_manufacture=product_request.dateOfManufacture, 
+            color=product_request.color, 
+            category=product_request.category
+        )
+        session.add(product)
         session.commit()
         session.close()
         return {"status": "success"}
