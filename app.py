@@ -115,7 +115,8 @@ def create_user(user_request: UserRequest):
         return {"status": "fail", "message": str(e)}
 
 @app.post("/signin")
-def login_user(login_request: LoginRequest):
+# 비동기 방식
+async def login_user(login_request: LoginRequest):
     try:
         session = database.get_session()
         user = session.query(User).filter(User.email == login_request.email).first()
@@ -125,6 +126,7 @@ def login_user(login_request: LoginRequest):
         return {"status": "success", "user_id": user.id}
     except Exception as e:
         return {"status": "fail", "message": str(e)}
+    
 
 @app.delete("/user/{user_id}")
 def delete_user(user_id: int):
