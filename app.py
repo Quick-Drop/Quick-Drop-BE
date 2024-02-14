@@ -58,6 +58,9 @@ class ProductRequest(BaseModel):
     color: str
     category: str
 
+class ProductDonated(BaseModel):
+    donated: bool
+
 class ImageData(BaseModel):
     data: str
 
@@ -237,6 +240,20 @@ def create_product(product_request: ProductRequest):
             category=product_request.category
         )
         session.add(product)
+        session.commit()
+        session.close()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
+
+@app.put("/product/{product_id}/donated")
+def update_donation_status(product_id: int, product_donated: ProductDonated):
+    try:
+        session = database.get_session()
+        product = session.query(Product).filter(Product.id == product_id).first()
+        if product == None:
+            return {"message": "product not found"}
+        product.donated = product_donated.donated
         session.commit()
         session.close()
         return {"status": "success"}

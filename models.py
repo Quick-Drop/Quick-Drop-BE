@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, TEXT, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, TEXT, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -29,5 +29,7 @@ class Product(Base):
     date_of_manufacture = Column(TEXT, nullable=False)
     color = Column(TEXT, nullable=False)
     category = Column(TEXT, nullable=False)
+    donated = Column(Boolean, nullable=False, default=False)
+
     # Product 모델에서 User 모델로의 역방향 관계를 정의.
     user = relationship("User", back_populates="product")
