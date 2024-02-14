@@ -30,6 +30,6 @@ class Product(Base):
     color = Column(TEXT, nullable=False)
     category = Column(TEXT, nullable=False)
     donated = Column(Boolean, nullable=False, default=False)
-
+    product_image_data = Column(TEXT, nullable=True)
     # Product 모델에서 User 모델로의 역방향 관계를 정의.
     user = relationship("User", back_populates="product")

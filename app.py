@@ -57,6 +57,7 @@ class ProductRequest(BaseModel):
     dateOfManufacture: str
     color: str
     category: str
+    image_data: str
 
 class ProductDonated(BaseModel):
     donated: bool
@@ -224,12 +225,14 @@ def get_product():
         return {"status": "fail", "message": str(e)}
 
 @app.post("/donation/upload")
-def create_product(product_request: ProductRequest):
+async def create_product(product_request: ProductRequest):
     try:
         session = database.get_session()
+
         user = session.query(User).filter(User.id == product_request.user_id).first()
-        if user == None:
+        if user is None:
             return {"message": "user not found"}
+        
         product = Product(
             user_id=product_request.user_id,
             title=product_request.Product_Title, 
@@ -237,7 +240,8 @@ def create_product(product_request: ProductRequest):
             brand_name=product_request.brandName, 
             date_of_manufacture=product_request.dateOfManufacture, 
             color=product_request.color, 
-            category=product_request.category
+            category=product_request.category,
+            product_image_data=product_request.image_data  # Base64 인코딩된 이미지 데이터 저장
         )
         session.add(product)
         session.commit()
@@ -245,6 +249,7 @@ def create_product(product_request: ProductRequest):
         return {"status": "success"}
     except Exception as e:
         return {"status": "fail", "message": str(e)}
+
 
 @app.put("/product/{product_id}/donated")
 def update_donation_status(product_id: int, product_donated: ProductDonated):
