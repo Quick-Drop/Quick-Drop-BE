@@ -214,13 +214,13 @@ def get_user_donations(user_id: int):
         return {"status": "fail", "message": str(e)}
     
 @app.get("/user/{user_id}/donations/{status}")
-def get_user_donations_by_status(user_id: int, product_donated: ProductDonated):
+def get_user_donations_by_status(user_id: int, status: bool):
     try:
         session = database.get_session()
         user = session.query(User).filter(User.id == user_id).first()
         if user == None:
             return {"message": "user not found"}
-        donations = session.query(Product).filter(Product.user_id == user_id, Product.donated == product_donated.donated).all()
+        donations = session.query(Product).filter(Product.user_id == user_id, Product.donated == status).all()
         if donations == []:
             return {"message": "no products"}
         session.close()
