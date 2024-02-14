@@ -79,7 +79,7 @@ class ImageData(BaseModel):
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello World"}
+    return {"message": "GDSC HUFS Quick Drop API Server"}
 
 ######################################## User API ########################################
 @app.get("/user")
@@ -206,6 +206,21 @@ def get_user_donations(user_id: int):
         if user == None:
             return {"message": "user not found"}
         donations = user.product
+        if donations == []:
+            return {"message": "no products"}
+        session.close()
+        return donations
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
+    
+@app.get("/user/{user_id}/donations/{status}")
+def get_user_donations_by_status(user_id: int, product_donated: ProductDonated):
+    try:
+        session = database.get_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if user == None:
+            return {"message": "user not found"}
+        donations = session.query(Product).filter(Product.user_id == user_id, Product.donated == product_donated.donated).all()
         if donations == []:
             return {"message": "no products"}
         session.close()
