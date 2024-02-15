@@ -229,15 +229,16 @@ def get_user_donations_by_status(user_id: int, status: bool):
         return {"status": "fail", "message": str(e)}
     
 @app.put("/user/{user_id}/product/{product_id}/donated")
-def update_donation_status(user_id: int, product_id: int, product_donated: ProductDonated):
+def toggle_donation_status(user_id: int, product_id: int):
     try:
         session = database.get_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if user == None:
+            return {"message": "user not found"}
         product = session.query(Product).filter(Product.id == product_id).first()
         if product == None:
             return {"message": "product not found"}
-        if product.user_id != user_id:
-            return {"message": "product does not belong to user"}
-        product.donated = product_donated.donated
+        product.donated = not product.donated
         session.commit()
         session.close()
         return {"status": "success"}
