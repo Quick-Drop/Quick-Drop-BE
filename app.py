@@ -227,6 +227,22 @@ def get_user_donations_by_status(user_id: int, status: bool):
         return donations
     except Exception as e:
         return {"status": "fail", "message": str(e)}
+    
+@app.put("/user/{user_id}/product/{product_id}/donated")
+def update_donation_status(user_id: int, product_id: int, product_donated: ProductDonated):
+    try:
+        session = database.get_session()
+        product = session.query(Product).filter(Product.id == product_id).first()
+        if product == None:
+            return {"message": "product not found"}
+        if product.user_id != user_id:
+            return {"message": "product does not belong to user"}
+        product.donated = product_donated.donated
+        session.commit()
+        session.close()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "fail", "message": str(e)}
 
 ######################################## Product API ########################################
 @app.get("/product")
