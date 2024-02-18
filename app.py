@@ -133,10 +133,10 @@ def delete_user(user_id: int):
     try:
         session = database.get_session()
         products = session.query(Product).filter(Product.user_id == user_id).all()
-        if products == []:
-            return {"message": "no products"}
-        for product in products:
-            session.delete(product)
+        # 물품 있을 떄만 삭제
+        if products != []:
+            for product in products:
+                session.delete(product)
         session.commit()
         user = session.query(User).filter(User.id == user_id).first()
         session.delete(user)
