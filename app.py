@@ -132,15 +132,20 @@ async def login_user(login_request: LoginRequest):
 def delete_user(user_id: int):
     try:
         session = database.get_session()
+        products = session.query(Product).filter(Product.user_id == user_id).all()
+        if products == []:
+            return {"message": "no products"}
+        for product in products:
+            session.delete(product)
+        session.commit()
         user = session.query(User).filter(User.id == user_id).first()
-        if user == None:
-            return {"message": "user not found"}
         session.delete(user)
         session.commit()
         session.close()
         return {"status": "success"}
     except Exception as e:
         return {"status": "fail", "message": str(e)}
+    
 
 @app.get("/user/{user_id}/profile")
 def get_user_profile(user_id: int):
